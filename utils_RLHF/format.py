@@ -19,7 +19,7 @@ def get_obss_preprocessor(obs_space):
             })
 
     # Check if it is a MiniGrid observation space with image and text
-    elif isinstance(obs_space, gym.spaces.Dict) and "image" in obs_space.spaces.keys() and "text" in obs_space.spaces.keys():
+    elif isinstance(obs_space, gym.spaces.Dict) and "image" in obs_space.spaces.keys() and "mission" in obs_space.spaces.keys():
         obs_space = {"image": obs_space.spaces["image"].shape, "text": 100}
 
         vocab = Vocabulary(obs_space["text"])

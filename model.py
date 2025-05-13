@@ -21,6 +21,7 @@ class ACModel(nn.Module, torch_ac.RecurrentACModel):
         # Decide which components are enabled
         self.use_text = use_text
         self.use_memory = use_memory
+        self.auto_indicator = False 
 
         # Define image embedding
         self.image_conv = nn.Sequential(

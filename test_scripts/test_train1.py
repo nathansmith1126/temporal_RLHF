@@ -118,7 +118,8 @@ def main(ENV_NAME, NUM_ENVS, TOTAL_FRAMES,
 # ----------------------------
 if __name__ == "__main__":
     # ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
-    ENV_NAME = "MiniGrid-DoorKey-8x8-v0"
+    ENV_NAME = "MiniGrid-UnlockPickup-v0"
+    # ENV_NAME = "MiniGrid-DoorKey-8x8-v0"
     NUM_ENVS = 4
     TOTAL_FRAMES = 1_000_000
     FRAMES_PER_PROC = 128
