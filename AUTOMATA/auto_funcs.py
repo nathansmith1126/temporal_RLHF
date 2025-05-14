@@ -1,4 +1,6 @@
 from automata.fa.dfa import DFA
+from WA_package.weighted_automaton import WeightedAutomaton
+import sympy as sp
 import numpy as np 
 # import builtins
 
@@ -136,6 +138,16 @@ dfa_T1 = DFA(
     initial_state='q0',
     final_states={'q5'}
 )
+
+def create_wfa_T1(f, s):
+    """
+    Function to create wfa representation of task 1
+    INPUTS 
+    f - weight assigned for forward progress
+    s - weight assigned for stationary progres
+    OUTPUTS
+    wfa_T1 - WFA object representing task 1
+    """
 
 if __name__ == "__main__":
     monitor_T1 = DFAMonitor(dfa_T1)
