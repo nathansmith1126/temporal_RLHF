@@ -22,8 +22,9 @@ from AUTOMATA.auto_funcs import dfa_T1
 # 🔧 Configuration
 # ----------------------------
 
-ENV_NAME        = "MiniGrid-TemporalTestEnv-v0"
-MODEL_TIMESTAMP = "2025-05-12_14-32-39"  # 📝 Change to your saved timestamp
+ENV_NAME = "MiniGrid-UnlockPickup-v0"
+# ENV_NAME        = "MiniGrid-TemporalTestEnv-v0"
+MODEL_TIMESTAMP = "2025-05-13_12-14-04"  # 📝 Change to your saved timestamp
 MODEL_DIR       = rf"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\torch_models\{ENV_NAME}"
 MODEL_PATH      = os.path.join(MODEL_DIR, f"model_{MODEL_TIMESTAMP}.pt")
 
