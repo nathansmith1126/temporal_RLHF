@@ -1,5 +1,10 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from automata.fa.dfa import DFA
 from WA_package.weighted_automaton import WeightedAutomaton
+from enum import Enum
 import sympy as sp
 import numpy as np 
 # import builtins
@@ -148,6 +153,34 @@ def create_wfa_T1(f, s):
     OUTPUTS
     wfa_T1 - WFA object representing task 1
     """
+    num_letters = 6
+    num_states  = 6
+
+    initial_array = sp.Matrix([[1, 0, 0, 0, 0, 0]])
+    final_array   = sp.Matrix.ones(6,1)
+    transition_dictionary = {}
+    
+    keys = {}
+    symbols = ['pickup key', 'opened door', 
+                'dropped key', 'closed door', 
+                'pickup box', 'movement']
+    for index in np.arange(num_letters-1):
+        progress_matrix   = sp.Matrix.zeros(num_states, num_states)
+        progress_matrix[index, index+1] = f
+
+        adjustment_matrix = sp.Matrix.zeros(num_states, num_states)
+        adjustment_matrix[index,index] = s
+
+        transition_matrix = s*sp.eye(num_states) + progress_matrix - adjustment_matrix
+        symbol = symbols[index]
+        transition_dictionary[symbol] = transition_matrix
+    transition_dictionary["movement"] = sp.Matrix.eye(num_states)
+
+    wfa_T1 = WeightedAutomaton(n=num_letters,alphabet=symbols, 
+                                initial=initial_array, 
+                                transitions=transition_dictionary, 
+                                final=final_array)
+    return wfa_T1
 
 if __name__ == "__main__":
     monitor_T1 = DFAMonitor(dfa_T1)
@@ -160,3 +193,15 @@ if __name__ == "__main__":
     print("✅ Accepting?" if monitor_T1.is_accepting() else "❌ Not accepting")
     print("Current state:", monitor_T1.current_state)
     print("History:", monitor_T1.history)
+    f = 2.
+    s = 0.5
+    wfa_T1 = create_wfa_T1(f=f, s=s)
+    test_good_word = [ 'pickup key', 'opened door', 
+                    'dropped key', 'closed door', 
+                    'pickup box', 'movement']
+    test_mediocre_word = [ 'pickup key', 'opened door', 'closed door', 'opened door',
+                    'dropped key', 'closed door', 
+                    'pickup box', 'movement']
+    good_weight = wfa_T1.weight(test_good_word)
+    mediocre_weight = wfa_T1.weight(test_mediocre_word)
+    print(f"{mediocre_weight}")
