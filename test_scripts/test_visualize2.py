@@ -1,6 +1,5 @@
 import sys
 import os 
-
 # Add parent and rl-starter-files to sys.path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, project_root)
@@ -15,16 +14,21 @@ import numpy as np
 from datetime import datetime
 from model import ACModel
 from utils_RLHF import get_obss_preprocessor, device
+from utils_RLHF.misc import load_bts_est, BT_SPEC_Estimator
 from minigrid.wrappers import ImgObsWrapper
-from AUTOMATA.auto_funcs import dfa_T1
+from AUTOMATA.auto_funcs import dfa_T1, create_wfa_T1
 
 # ----------------------------
 # 🔧 Configuration
 # ----------------------------
+WFA_indicator = True 
+if WFA_indicator:
+    ENV_NAME = "MiniGrid-TemporalWFATestEnv-v0"
+else:
+    # ENV_NAME = "MiniGrid-UnlockPickup-v0"
+    ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
 
-ENV_NAME = "MiniGrid-UnlockPickup-v0"
-# ENV_NAME        = "MiniGrid-TemporalTestEnv-v0"
-MODEL_TIMESTAMP = "2025-05-13_12-14-04"  # 📝 Change to your saved timestamp
+MODEL_TIMESTAMP = "2025-05-21_21-37-20"  # 📝 Change to your saved timestamp
 MODEL_DIR       = rf"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\torch_models\{ENV_NAME}"
 MODEL_PATH      = os.path.join(MODEL_DIR, f"model_{MODEL_TIMESTAMP}.pt")
 
@@ -35,15 +39,37 @@ if ENV_NAME in gym.envs.registry:
     print(f"{ENV_NAME} is already registered, no need to register")
 else:
     # register environment
-    register(
-        id="MiniGrid-TemporalTestEnv-v0",               # Unique environment ID
-        entry_point="Minigrid.minigrid.envs.test_envs:TestEnv",  # Module path to the class
-        kwargs={
-            "auto_task": dfa_T1,
-            "auto_reward": 0.1,
-            "render_mode": "rgb_array"
-        },
-    )
+    if WFA_indicator:
+        "register WFA augmented env"
+        # f = 0.99
+        # s = 0.4
+        # WFA_T1 = create_wfa_T1(f=f, s=s)
+        # register learned WFA
+        est_name = "bts_est_20250521_172018.pkl" 
+        est_direc = r"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\BTS_models"
+        full_path = os.path.join(est_direc, est_name)
+        BTS_EST = load_bts_est(pickle_path=full_path)
+        WFA = BTS_EST.learned_WFA
+        # register environment
+        register(
+            id="MiniGrid-TemporalWFATestEnv-v0",               # Unique environment ID
+            entry_point="Minigrid.minigrid.envs.test_envs:WFA_TestEnv",  # Module path to the class
+            kwargs={
+                "WFA": WFA,
+                "render_mode": "rgb_array"
+            },
+        )
+    else:
+        # register dfa environment
+        register(
+            id="MiniGrid-TemporalTestEnv-v0",               # Unique environment ID
+            entry_point="Minigrid.minigrid.envs.test_envs:TestEnv",  # Module path to the class
+            kwargs={
+                "auto_task": dfa_T1,
+                "auto_reward": 0.1,
+                "render_mode": "rgb_array"
+            },
+        )
 
 # ----------------------------
 # 🧠 Load environment

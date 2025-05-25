@@ -18,20 +18,6 @@ def get_obss_preprocessor(obs_space):
                 "image": preprocess_images(obss, device=device)
             })
 
-    # Check if it is a MiniGrid observation space with image and text
-    elif isinstance(obs_space, gym.spaces.Dict) and "image" in obs_space.spaces.keys() and "mission" in obs_space.spaces.keys():
-        obs_space = {"image": obs_space.spaces["image"].shape, "text": 100}
-
-        vocab = Vocabulary(obs_space["text"])
-
-        def preprocess_obss(obss, device=None):
-            return torch_ac.DictList({
-                "image": preprocess_images([obs["image"] for obs in obss], device=device),
-                "text": preprocess_texts([obs["mission"] for obs in obss], vocab, device=device)
-            })
-
-        preprocess_obss.vocab = vocab
-
     elif isinstance(obs_space, gym.spaces.Dict) and "auto_state" in obs_space.spaces.keys():
         """
         Checks if state space is product MDP state
@@ -51,6 +37,20 @@ def get_obss_preprocessor(obs_space):
                 "image": preprocess_images( [obs["image"] for obs in obss], device=device),
                 "auto_state": preprocess_images( [obs["auto_state"] for obs in obss], device=device)
             })
+        
+    # Check if it is a MiniGrid observation space with image and text
+    elif isinstance(obs_space, gym.spaces.Dict) and "image" in obs_space.spaces.keys() and "mission" in obs_space.spaces.keys():
+        obs_space = {"image": obs_space.spaces["image"].shape, "text": 100}
+
+        vocab = Vocabulary(obs_space["text"])
+
+        def preprocess_obss(obss, device=None):
+            return torch_ac.DictList({
+                "image": preprocess_images([obs["image"] for obs in obss], device=device),
+                "text": preprocess_texts([obs["mission"] for obs in obss], vocab, device=device)
+            })
+
+        preprocess_obss.vocab = vocab    
     else:
         raise ValueError("Unknown observation space: " + str(obs_space))
 
