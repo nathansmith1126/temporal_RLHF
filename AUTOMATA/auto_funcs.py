@@ -7,6 +7,9 @@ import numpy as np
 # # Disable print
 # builtins.print = lambda *args, **kwargs: None
 
+# Import visualization tools.
+from visual_automata.fa.dfa import VisualDFA
+
 class DFAMonitor:
     def __init__(self, dfa):
         "monitors discrete finite automaton"
@@ -91,7 +94,7 @@ dfa_T1 = DFA(
                 'opened door': 'q0',         # Wrong symbol → stay
                 'dropped key': 'q0',
                 'closed door': 'q0',
-                'pickup box': 'q0', 
+                'pickup box': 'q0',
                 'movement': 'q0'
                 },
         'q1': {
@@ -131,13 +134,14 @@ dfa_T1 = DFA(
             'opened door': 'q5',
             'dropped key': 'q5',
             'closed door': 'q5',
-            'pickup box': 'q5', 
+            'pickup box': 'q5',
             'movement': 'q5'
-        }
+        },
     },
     initial_state='q0',
     final_states={'q5'}
 )
+
 
 def create_wfa_T1(f, s):
     """
@@ -150,6 +154,8 @@ def create_wfa_T1(f, s):
     """
 
 if __name__ == "__main__":
+    dfa_T1_visual = VisualDFA(dfa_T1)
+    dfa_T1_visual.show_diagram()
     monitor_T1 = DFAMonitor(dfa_T1)
 
     # Simulate input symbols arriving one by one

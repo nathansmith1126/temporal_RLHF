@@ -76,6 +76,7 @@ class TestEnv(RoomGrid):
         )
         self.path_log = []
         self.auto_task = auto_task # automaton representation of LTL task
+        self.trace = []
 
         # initialize monitor for dfa transitions
         self.dfa_monitor = DFAMonitor( self.auto_task )
@@ -166,6 +167,8 @@ class TestEnv(RoomGrid):
         # action is propagated forward
         was_carrying = self.carrying
         obs, reward, terminated, truncated, info = super().step(action)
+
+        self.trace.append(action)
 
         # Start with a basic log entry
         log_entry = {

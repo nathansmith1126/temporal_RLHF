@@ -1,6 +1,7 @@
 from __future__ import annotations
 import os 
 import sys
+import pandas as pd
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from Minigrid.minigrid.envs.test_envs import TestEnv
@@ -19,3 +20,6 @@ obs, _ = env.reset()
 # Start manual control interface
 manual = ManualControl(env, seed=42)
 manual.start()
+
+trace = pd.DataFrame(env.trace)
+trace.to_csv("trace.csv", index=False)
