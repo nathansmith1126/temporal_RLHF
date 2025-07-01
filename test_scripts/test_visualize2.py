@@ -8,68 +8,31 @@ sys.path.insert(0, project_root)
 # sys.path.insert(0, rl_starter_path)
 
 import torch
+import time 
 import gymnasium as gym
 from gymnasium.envs.registration import register
 import numpy as np
 from datetime import datetime
 from model import ACModel
 from utils_RLHF import get_obss_preprocessor, device
-from utils_RLHF.misc import load_bts_est, BT_SPEC_Estimator
+from utils_RLHF.misc import load_bts_est, BT_SPEC_Estimator, register_special_envs, create_ord_obj_env
 from minigrid.wrappers import ImgObsWrapper
 from AUTOMATA.auto_funcs import dfa_T1, create_wfa_T1
 
 # ----------------------------
 # 🔧 Configuration
 # ----------------------------
-WFA_indicator = True 
-if WFA_indicator:
-    ENV_NAME = "MiniGrid-TemporalWFATestEnv-v0"
-else:
-    # ENV_NAME = "MiniGrid-UnlockPickup-v0"
-    ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
-
-MODEL_TIMESTAMP = "2025-05-21_21-37-20"  # 📝 Change to your saved timestamp
+ENV = create_ord_obj_env()
+ENV_NAME = ENV.registered_name
+MODEL_TIMESTAMP = "2025-07-01_09-44-54"  # 📝 Change to your saved timestamp
 MODEL_DIR       = rf"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\torch_models\{ENV_NAME}"
 MODEL_PATH      = os.path.join(MODEL_DIR, f"model_{MODEL_TIMESTAMP}.pt")
 
 NUM_EPISODES = 10
 RENDER = True  # Set to False if running headless
+render_delay = 0.5
+register_special_envs(ENV=ENV)
 
-if ENV_NAME in gym.envs.registry:
-    print(f"{ENV_NAME} is already registered, no need to register")
-else:
-    # register environment
-    if WFA_indicator:
-        "register WFA augmented env"
-        # f = 0.99
-        # s = 0.4
-        # WFA_T1 = create_wfa_T1(f=f, s=s)
-        # register learned WFA
-        est_name = "bts_est_20250521_172018.pkl" 
-        est_direc = r"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\BTS_models"
-        full_path = os.path.join(est_direc, est_name)
-        BTS_EST = load_bts_est(pickle_path=full_path)
-        WFA = BTS_EST.learned_WFA
-        # register environment
-        register(
-            id="MiniGrid-TemporalWFATestEnv-v0",               # Unique environment ID
-            entry_point="Minigrid.minigrid.envs.test_envs:WFA_TestEnv",  # Module path to the class
-            kwargs={
-                "WFA": WFA,
-                "render_mode": "rgb_array"
-            },
-        )
-    else:
-        # register dfa environment
-        register(
-            id="MiniGrid-TemporalTestEnv-v0",               # Unique environment ID
-            entry_point="Minigrid.minigrid.envs.test_envs:TestEnv",  # Module path to the class
-            kwargs={
-                "auto_task": dfa_T1,
-                "auto_reward": 0.1,
-                "render_mode": "rgb_array"
-            },
-        )
 
 # ----------------------------
 # 🧠 Load environment
@@ -106,7 +69,8 @@ for ep in range(NUM_EPISODES):
     while not done:
         if RENDER:
             env.render()
-
+            # Add a time delay to slow down visualization (in seconds)
+            time.sleep(render_delay) 
         preprocessed_obs = preprocess_obss([obs], device=device)
         with torch.no_grad():
             dummy_memory = torch.zeros(1, acmodel.memory_size, device=device)

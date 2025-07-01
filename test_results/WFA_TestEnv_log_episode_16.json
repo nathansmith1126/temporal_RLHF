@@ -1,0 +1,1388 @@
+[
+  {
+    "step": 1,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 0,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 2,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 1,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 3,
+    "pos": [
+      2,
+      3
+    ],
+    "dir": 1,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 4,
+    "pos": [
+      2,
+      3
+    ],
+    "dir": 0,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 5,
+    "pos": [
+      2,
+      3
+    ],
+    "dir": 0,
+    "action": 3,
+    "reward": -0.25,
+    "event": "pickup box"
+  },
+  {
+    "step": 6,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 7,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 8,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 3,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 9,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 10,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": -0.25,
+    "event": "dropped box"
+  },
+  {
+    "step": 11,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 3,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 12,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 3,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup ball"
+  },
+  {
+    "step": 13,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 14,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 1,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 15,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 1,
+    "action": 4,
+    "reward": 10.0,
+    "event": "dropped ball"
+  },
+  {
+    "step": 16,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 17,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup box"
+  },
+  {
+    "step": 18,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": 19.1,
+    "event": "dropped box"
+  },
+  {
+    "step": 1,
+    "pos": [
+      2,
+      4
+    ],
+    "dir": 0,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 2,
+    "pos": [
+      2,
+      4
+    ],
+    "dir": 0,
+    "action": 3,
+    "reward": -0.25,
+    "event": "pickup box"
+  },
+  {
+    "step": 3,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 4,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 5,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 6,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 7,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": -0.25,
+    "event": "dropped box"
+  },
+  {
+    "step": 8,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 3,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 9,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 3,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup ball"
+  },
+  {
+    "step": 10,
+    "pos": [
+      4,
+      3
+    ],
+    "dir": 3,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 11,
+    "pos": [
+      4,
+      3
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 12,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 2,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 13,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 1,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 14,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 0,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 15,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 0,
+    "action": 4,
+    "reward": 10.0,
+    "event": "dropped ball"
+  },
+  {
+    "step": 16,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 1,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 17,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 1,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup box"
+  },
+  {
+    "step": 18,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 1,
+    "action": 4,
+    "reward": 19.1,
+    "event": "dropped box"
+  },
+  {
+    "step": 1,
+    "pos": [
+      1,
+      3
+    ],
+    "dir": 0,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 2,
+    "pos": [
+      2,
+      3
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 3,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 4,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 1,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 5,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 1,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 6,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 0,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 7,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 0,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup ball"
+  },
+  {
+    "step": 8,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 9,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 3,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 10,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 3,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 11,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 12,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": 10.0,
+    "event": "dropped ball"
+  },
+  {
+    "step": 13,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 3,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 14,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 3,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup box"
+  },
+  {
+    "step": 15,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 3,
+    "action": 4,
+    "reward": 19.25,
+    "event": "dropped box"
+  },
+  {
+    "step": 1,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 2,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 2,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 1,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 3,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 1,
+    "action": 3,
+    "reward": -0.25,
+    "event": "pickup box"
+  },
+  {
+    "step": 4,
+    "pos": [
+      2,
+      3
+    ],
+    "dir": 1,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 5,
+    "pos": [
+      2,
+      3
+    ],
+    "dir": 0,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 6,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 7,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 8,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 3,
+    "action": 4,
+    "reward": -0.25,
+    "event": "dropped box"
+  },
+  {
+    "step": 9,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 0,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 10,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 0,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup ball"
+  },
+  {
+    "step": 11,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 12,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 13,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": 10.0,
+    "event": "dropped ball"
+  },
+  {
+    "step": 14,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 3,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 15,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 3,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup box"
+  },
+  {
+    "step": 16,
+    "pos": [
+      3,
+      3
+    ],
+    "dir": 3,
+    "action": 4,
+    "reward": 19.200000000000003,
+    "event": "dropped box"
+  },
+  {
+    "step": 1,
+    "pos": [
+      1,
+      4
+    ],
+    "dir": 1,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 2,
+    "pos": [
+      1,
+      4
+    ],
+    "dir": 0,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 3,
+    "pos": [
+      2,
+      4
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 4,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 5,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 6,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 7,
+    "pos": [
+      4,
+      4
+    ],
+    "dir": 3,
+    "action": 3,
+    "reward": -0.25,
+    "event": "pickup box"
+  },
+  {
+    "step": 8,
+    "pos": [
+      4,
+      3
+    ],
+    "dir": 3,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 9,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 3,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 10,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 11,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 2,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 12,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 2,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 13,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": -0.25,
+    "event": "dropped box"
+  },
+  {
+    "step": 14,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 3,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 15,
+    "pos": [
+      2,
+      1
+    ],
+    "dir": 3,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 16,
+    "pos": [
+      2,
+      1
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 17,
+    "pos": [
+      2,
+      1
+    ],
+    "dir": 2,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup ball"
+  },
+  {
+    "step": 18,
+    "pos": [
+      1,
+      1
+    ],
+    "dir": 2,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 19,
+    "pos": [
+      1,
+      1
+    ],
+    "dir": 1,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 20,
+    "pos": [
+      1,
+      1
+    ],
+    "dir": 0,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 21,
+    "pos": [
+      1,
+      1
+    ],
+    "dir": 0,
+    "action": 4,
+    "reward": 10.0,
+    "event": "dropped ball"
+  },
+  {
+    "step": 22,
+    "pos": [
+      1,
+      1
+    ],
+    "dir": 1,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 23,
+    "pos": [
+      1,
+      1
+    ],
+    "dir": 1,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup box"
+  },
+  {
+    "step": 24,
+    "pos": [
+      1,
+      2
+    ],
+    "dir": 1,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 25,
+    "pos": [
+      1,
+      2
+    ],
+    "dir": 1,
+    "action": 4,
+    "reward": 18.75,
+    "event": "dropped box"
+  },
+  {
+    "step": 1,
+    "pos": [
+      2,
+      1
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 2,
+    "pos": [
+      2,
+      1
+    ],
+    "dir": 1,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 3,
+    "pos": [
+      2,
+      1
+    ],
+    "dir": 1,
+    "action": 3,
+    "reward": -0.25,
+    "event": "pickup box"
+  },
+  {
+    "step": 4,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 1,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 5,
+    "pos": [
+      2,
+      3
+    ],
+    "dir": 1,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 6,
+    "pos": [
+      2,
+      4
+    ],
+    "dir": 1,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 7,
+    "pos": [
+      2,
+      4
+    ],
+    "dir": 0,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 8,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 9,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 10,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 3,
+    "action": 4,
+    "reward": -0.25,
+    "event": "dropped box"
+  },
+  {
+    "step": 11,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 0,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 12,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 0,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup ball"
+  },
+  {
+    "step": 13,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 14,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 15,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": 10.0,
+    "event": "dropped ball"
+  },
+  {
+    "step": 16,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 3,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 17,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 3,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup box"
+  },
+  {
+    "step": 18,
+    "pos": [
+      3,
+      4
+    ],
+    "dir": 3,
+    "action": 4,
+    "reward": 19.1,
+    "event": "dropped box"
+  },
+  {
+    "step": 1,
+    "pos": [
+      1,
+      2
+    ],
+    "dir": 0,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 2,
+    "pos": [
+      1,
+      2
+    ],
+    "dir": 0,
+    "action": 3,
+    "reward": -0.25,
+    "event": "pickup box"
+  },
+  {
+    "step": 3,
+    "pos": [
+      2,
+      2
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 4,
+    "pos": [
+      3,
+      2
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 5,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 0,
+    "action": 2,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 6,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 3,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 7,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 8,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": -0.25,
+    "event": "dropped box"
+  },
+  {
+    "step": 9,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 3,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 10,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 3,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup ball"
+  },
+  {
+    "step": 11,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 2,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 12,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 1,
+    "action": 0,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 13,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 1,
+    "action": 4,
+    "reward": 10.0,
+    "event": "dropped ball"
+  },
+  {
+    "step": 14,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 2,
+    "action": 1,
+    "reward": 0,
+    "event": null
+  },
+  {
+    "step": 15,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 2,
+    "action": 3,
+    "reward": 10.0,
+    "event": "pickup box"
+  },
+  {
+    "step": 16,
+    "pos": [
+      4,
+      2
+    ],
+    "dir": 2,
+    "action": 4,
+    "reward": 19.200000000000003,
+    "event": "dropped box"
+  }
+]

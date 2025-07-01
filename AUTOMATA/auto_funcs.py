@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from automata.fa.dfa import DFA
 from WA_package.weighted_automaton import WeightedAutomaton
 from enum import Enum
+from typing import Optional 
 import sympy as sp
 import numpy as np 
 # import builtins
@@ -28,35 +29,35 @@ class DFAMonitor:
         self.states_dict = {state: index for index, state in enumerate(sorted(state_list))}
         "dictionary mapping between states and natural numbers"
   
-    def step(self, symbol=None):
+    def step(self, event: Optional[ str ] = None ):
         """
         step function for dfa
-        input - symbol
+        input [str] - event 
         """
         "assume no progress is made by default"
         self.progress = False
-        if not symbol:
+        if not event:
             pass
         else:
             """
-            check for invalid symbols
+            check for invalid events
             """
-            if symbol not in self.dfa.input_symbols:
-                print(f"Undefined symbol: {symbol}")
-                raise ValueError(f"Invalid input symbol: {symbol}")
-            elif symbol not in self.dfa.transitions[self.current_state]:
-                raise ValueError(f"No transition from {self.current_state} on {symbol}")
+            if event not in self.dfa.input_symbols:
+                print(f"Undefined symbol: {event}")
+                raise ValueError(f"Invalid input event: {event}")
+            elif event not in self.dfa.transitions[self.current_state]:
+                raise ValueError(f"No transition from {self.current_state} on {event}")
             
-            next_state = self.dfa.transitions[self.current_state][symbol]
+            next_state = self.dfa.transitions[self.current_state][event]
             if not next_state == self.current_state:
                 "transition has been made"
                 self.progress = True
                 # print(f"progress is {self.progress}")
-            # print(f"{self.current_state} --[{symbol}]--> {next_state}")
+            # print(f"{self.current_state} --[{event}]--> {next_state}")
             # print(f"state before transition is {self.current_state}")
             self.current_state = next_state
             # print(f"state post transition is {self.current_state}")
-            self.history.append((self.current_state, symbol, next_state))
+            self.history.append((self.current_state, event, next_state))
 
     def is_accepting(self):
         return self.current_state in self.dfa.final_states
@@ -86,94 +87,114 @@ class DFAMonitor:
         self.history = []
 
 class WFA_monitor:
-    def __init__(self, WFA, delta_thresh = 0.5, check_decrease=False, min_prob_thresh = 1e-30):
+    def __init__(self, WFA: WeightedAutomaton, delta_thresh: Optional[float] = 0.05, 
+                 min_f_thresh: Optional[float] = 1e-30, 
+                 word: Optional[ list[str] ] = None):
+        """
+        ADD PARAMETERS TO CHECK FOR WFA COMPLETION
+        """
+        # WFA parameters
         "monitors weighted finite automaton"
         self.WFA = WFA
+
         "convert WFA arrays to numpy arrays from sympy arrays"
         self.initial = np.array( WFA.initial ).astype(np.float64)
         self.final   = np.array( WFA.final ).astype(np.float64)
+        self.num_states = WFA.n
         self.current_state = self.initial
+        # accessed by environment
+        self.word = word 
+
+        # Monitoring parameters
         self.history = []
         self.progress = False
         self.trans_quality = True 
         self.delta_thresh = delta_thresh
-        self.min_prob_thresh     = min_prob_thresh
-        self.num_states = WFA.n
-        self.prob_decrease = False
-        self.prob_increase = False
-        self.check_decrease= check_decrease
-        self.prob = 1
+        self.min_f_thresh     = min_f_thresh
+        self.f_decrease = False
+        self.f_increase = False
+        self.f = 1
         self.unstable_ind = False
-        self.recent_event = None 
         self.transitions = {}
+        self.complete_ind = False 
+
+        # convert transition matrices from sympy arrays to numpy arrays
         for key in WFA.transitions:
             self.transitions[key] = np.array( WFA.transitions[key] ).astype(np.float64)
         
     
-    def step(self, symbol=None):
+    def step(self, event: Optional[str] = None):
         """
         step function for wfa
-        input - symbol
+        ARGS
+        event [str] - event observed in environment
         """
-        "assume no progress is made by default"
-        self.progress = False
-        self.prob_increase = False
-        if not symbol:
-            # no transition made, all thats 
-            # needed is to reset the progress attribute
-            pass
-        else:
+        self.f_increase = False
+        self.f_decrease = False 
+        if event:
             """
-            check for invalid symbols
+            check for invalid events
             """
-            if symbol not in self.WFA.alphabet:
-                print(f"Undefined symbol: {symbol}")
-                raise ValueError(f"Invalid input symbol: {symbol}")
-            self.recent_event = symbol
-            next_state = self.current_state@self.transitions[symbol]
+            if event not in self.WFA.alphabet:
+                print(f"Undefined event: {event}")
+                raise ValueError(f"Invalid input event: {event}")
+
+            next_state = self.current_state@self.transitions[event]
             
-            # trans probabilites of current state and next
-            current_prob = self.current_state@self.final
-            next_prob    = next_state@self.final
-
-            # current should be > next by markov
-            delta_prob = current_prob - next_prob 
-
-            if delta_prob <= -0.05:
-            # likelihood magically increases 
-                self.prob_increase = True 
-            elif self.check_decrease:
-            # check if there was a big likelihood increase
-            # normalized likelihood change
-                norm_delta_prob = np.abs( delta_prob/current_prob )
-                if  norm_delta_prob > self.delta_thresh:
-                    "transition has been made"
-                    self.prob_decrease = True
-                else:
-                    self.prob_decrease = False
-                    # print(f"progress is {self.progress}")
-            # print(f"{self.current_state} --[{symbol}]--> {next_state}")
-            # print(f"state before transition is {self.current_state}")
-
+            self.measure_progress(next_state=next_state)
             self.current_state = next_state
-            self.trans_prob()
+            self.check_complete()
+            self.instability_check()
             # print(f"state post transition is {self.current_state}")
-            self.history.append((self.current_state, symbol, next_state))
+            self.history.append((self.current_state, event, next_state))
     
-    def trans_prob(self):
-        """TEST THIS FUNCTION WHEN YOU RETURN"""
-        self.prob = self.current_state@self.final
-        if self.prob <= 0.1:
+    def instability_check(self):
+        """
+        checks if scoring function is "too close" to zero
+        """
+        self.f_value = self.current_state@self.final
+        if self.f_value <= 0.1:
             self.trans_quality = False
-            self.unstable_ind = np.isclose(self.prob, 0,atol=self.min_prob_thresh)
+            self.unstable_ind = np.isclose(self.f_value, 0, atol=self.min_f_thresh)
         else:
             self.trans_quality = True 
-        # print(f"transition likelihood:{self.prob}")
+
+    def measure_progress(self, next_state):
+        """
+        Update indicators to determine if 
+        the scoring function of the current path has changed significantly
+        """
+        # WFA scroing func of current state and next
+        current_f = self.current_state@self.final
+        next_f    = next_state@self.final
+
+        # change in wfa scoring function 
+        delta_f = current_f - next_f 
+
+        if delta_f <= -0.01:
+        # scoring function increases 
+            self.f_increase = True 
+        else: 
+        # check if there was a big score decrease
+            norm_delta_f = np.abs( delta_f/current_f )
+            if  norm_delta_f > self.delta_thresh:
+                "transition has been made"
+                self.f_decrease = True
+            else:
+                self.f_decrease = False
+                # print(f"progress is {self.progress}")
+        # print(f"{self.current_state} --[{event}]--> {next_state}")
+        # print(f"state before transition is {self.current_state}")
+
+    def check_complete(self):
+        if self.current_state[-1,-1] > 0.:
+            self.complete_ind = True
 
     def reset(self):
         """Reset auto to initial state and clear history"""
         self.current_state = self.initial
         self.history = []
+        self.complete_ind = False 
 
 
 dfa_T1 = DFA(

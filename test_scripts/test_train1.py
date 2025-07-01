@@ -19,64 +19,55 @@ from gymnasium.envs.registration import register
 # from utils_RLHF import get_obss_preprocessor, device
 from utils_RLHF.other import device
 from utils_RLHF.format import get_obss_preprocessor
-from utils_RLHF.misc import load_bts_est, BT_SPEC_Estimator
+from utils_RLHF.misc import register_special_envs, create_ord_obj_env, load_bts_est, BT_SPEC_Estimator, word2WFA_max
 import torch_ac
 from torch_ac.algos.ppo import PPOAlgo
 from torch_ac.utils.penv import ParallelEnv
-from model import ACModel  # Should be your custom model
-from AUTOMATA.auto_funcs import dfa_T1, create_wfa_T1
+from model import ACModel  # custom model
+from AUTOMATA.auto_funcs import dfa_T1, create_wfa_T1, WFA_monitor
 from datetime import datetime
+from typing import Optional 
 
 # ----------------------------
 # 🏁 Main Training Routine
 # ----------------------------
-def main(ENV_NAME, NUM_ENVS, TOTAL_FRAMES,
-                          FRAMES_PER_PROC, WFA_indicator, 
+def main(ENV, NUM_ENVS, TOTAL_FRAMES,
+                          FRAMES_PER_PROC, 
                           gae_lambda = 0.95, entropy_coef = 0.05, 
-                          max_steps=None):
-    
+                          save_indicator: Optional[bool] = True, 
+                          max_steps: Optional[int] = None, 
+                          ):
+    """
+    Runs training routine and saves model to torch_models
+    Args:
+    ENV - minigrdid environment agent navigates 
+    NUM_ENVS [int] - number of parallel environments used during PPO setup
+    gae_lambda [float] - learning parameter, decrease to promote exploration
+    entropy_coef [float] - learning parameter, increase to promote exploration
+    save_indicator [bool] - boolean indicator to save model
+    max_steps [int] - maximum number of actions an agent takes before environment resets
+    """
+    # if env_params:
+    #     f_reward = env_params["f_reward"]
+    #     f_penalty = env_params["f_penalty"]
+    #     finish_factor = env_params["finish_factor"]
+    #     env_size = env_params["env_size"]
+    #     register_special_envs( ENV_NAME=ENV_NAME, 
+    #                       f_reward=f_reward, 
+    #                       f_penalty=f_penalty, 
+    #                       env_size=env_size, 
+    #                       finish_factor=finish_factor,
+    #                       max_steps=max_steps)
+    # else:
+    register_special_envs( ENV=ENV, 
+                            max_steps=max_steps)
     # ----------------------------
     # 🧠 Environment factory
     # ----------------------------
 
-    if ENV_NAME in gym.envs.registry:
-        print(f"{ENV_NAME} is already registered, no need to register")
-    else:
-        if WFA_indicator:
-            "register WFA augmented env"
-            # f = 0.99
-            # s = 0.4
-            # WFA_T1 = create_wfa_T1(f=f, s=s)
-            est_name = "bts_est_2025-05-22_10-30-34.pkl"
-            est_direc = r"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\BTS_models"
-            full_path = os.path.join(est_direc, est_name)
-            BTS_EST = load_bts_est(pickle_path=full_path)
-            
-            WFA = BTS_EST.learned_WFA
-            # register environment
-            register(
-                id="MiniGrid-TemporalSPWFATestEnv-v0",               # Unique environment ID
-                entry_point="Minigrid.minigrid.envs.test_envs:SPWFA_TestEnv",  # Module path to the class
-                kwargs={
-                    "WFA": WFA,
-                    "max_steps": max_steps,
-                    "render_mode": "rgb_array"
-                },
-            )
-        else:
-            # register dfa environment
-            register(
-                id="MiniGrid-TemporalTestEnv-v0",               # Unique environment ID
-                entry_point="Minigrid.minigrid.envs.test_envs:TestEnv",  # Module path to the class
-                kwargs={
-                    "auto_task": dfa_T1,
-                    "auto_reward": 0.1,
-                    "render_mode": "rgb_array"
-                },
-            )
 
     def make_env():
-        env = gym.make(ENV_NAME)
+        env = gym.make(ENV.registered_name)
         # env.observation_space
         # env = ImgObsWrapper(env)
         # env.observation_space
@@ -123,6 +114,10 @@ def main(ENV_NAME, NUM_ENVS, TOTAL_FRAMES,
     num_frames = 0
     update = 0
 
+    # stopping criterion
+    patience = 30 # stops training when no improvement occurs after 10 episodes
+    best_return = -np.inf # initialize best return
+
     while num_frames < TOTAL_FRAMES:
         exps, logs1 = algo.collect_experiences()
         logs2 = algo.update_parameters(exps)
@@ -130,11 +125,27 @@ def main(ENV_NAME, NUM_ENVS, TOTAL_FRAMES,
         num_frames += logs["num_frames"]
         update += 1
 
+        # Calculate the average return for the current update
+        avg_return = np.mean(logs['return_per_episode'])
+        
         print(
             f"Update {update} | Frames {num_frames} "
-            f"| Return: {np.mean(logs['return_per_episode']):.2f} "
+            f"| Return: {avg_return:.2f} "
             f"| Episodes: {len(logs['return_per_episode'])}"
         )
+
+        # Check for improvement in average return
+        if avg_return > best_return:
+            best_return = avg_return
+            no_improvement_count = 0
+            # Save the model when the return improves
+        else:
+            no_improvement_count += 1
+    
+    # Early stopping condition: if average return doesn't improve for 'patience' updates
+        if no_improvement_count >= patience:
+            print(f"🚫 No improvement in the last {patience} updates. Stopping training...")
+            break
 
         if update % 40 == 0:
             obs, _ = env.reset()
@@ -143,47 +154,9 @@ def main(ENV_NAME, NUM_ENVS, TOTAL_FRAMES,
                 dummy_memory = torch.zeros(1, model.memory_size, device=device)
                 dist, _, _ = model(preprocessed_obs, dummy_memory)
                 print("🔍 Action distribution:", dist.probs.cpu().numpy())
-
-        
-
-    print("✅ Training complete!")
-    return algo, ENV_NAME
-
-
-
-# ----------------------------
-# 🔒 Windows-safe entry point
-# ----------------------------
-if __name__ == "__main__":
-    WFA_indicator = True
-
-    if WFA_indicator:
-        ENV_NAME = "MiniGrid-TemporalSPWFATestEnv-v0"
-    else:
-        ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
-    # ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
-    # ENV_NAME = "MiniGrid-UnlockPickup-v0"
-    # ENV_NAME = "MiniGrid-DoorKey-8x8-v0"
-
-    # HYPERPAREMETERS
-    max_steps = None 
-    NUM_ENVS = 4
-    TOTAL_FRAMES = 1_000_000
-    FRAMES_PER_PROC = 512
-    save = True
-    entropy_coef = 0.15                                                                  
-    gae_lambda   = 0.90
-    algo, ENV_NAME = main(ENV_NAME=ENV_NAME, 
-                          NUM_ENVS=NUM_ENVS, 
-                          TOTAL_FRAMES=TOTAL_FRAMES, 
-                          FRAMES_PER_PROC=FRAMES_PER_PROC, 
-                          WFA_indicator=WFA_indicator, 
-                          entropy_coef=entropy_coef, 
-                          gae_lambda=gae_lambda,
-                          max_steps=max_steps)
-
-    if save:
-        # Create directory to save models
+    
+    if save_indicator:
+    # Create directory to save models
         save_dir = os.path.join(r"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\torch_models", 
                                 ENV_NAME)
         os.makedirs(save_dir, exist_ok=True)
@@ -195,5 +168,47 @@ if __name__ == "__main__":
         # Save the model
         torch.save(algo.acmodel.state_dict(), model_file)
         print(f"✅ Model saved to {model_file}")
+
+    print("✅ Training complete!")
+    return algo, ENV_NAME
+
+
+
+# ----------------------------
+# 🔒 Windows-safe entry point
+# ----------------------------
+if __name__ == "__main__":
+    save_indicator = True 
+    env_indicator = "ord_obj"
+    # env_indicator = "original_wfa"
+    if env_indicator == "ord_obj":
+        ord_obj_env = create_ord_obj_env()
+        ENV = ord_obj_env
+    elif env_indicator == "original_wfa":
+        ENV_NAME = "MiniGrid-TemporalSPWFATestEnv-v0"
+    else:
+        # dfa
+        ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
+    
+    # ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
+    # ENV_NAME = "MiniGrid-UnlockPickup-v0"
+    # ENV_NAME = "MiniGrid-DoorKey-8x8-v0"
+
+    # HYPERPAREMETERS
+    max_steps = None 
+    NUM_ENVS = 8
+    TOTAL_FRAMES = 1_500_000
+    FRAMES_PER_PROC = 512
+    save = True
+    entropy_coef = 0.15                                                                  
+    gae_lambda   = 0.90
+    algo, ENV_NAME = main(ENV=ENV, 
+                          NUM_ENVS=NUM_ENVS, 
+                          TOTAL_FRAMES=TOTAL_FRAMES, 
+                          FRAMES_PER_PROC=FRAMES_PER_PROC,  
+                          entropy_coef=entropy_coef, 
+                          gae_lambda=gae_lambda,
+                          max_steps=max_steps, 
+                          save_indicator = save_indicator)
 
 
