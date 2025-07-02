@@ -84,6 +84,9 @@ class TestEnv(RoomGrid):
         # initialize monitor for dfa transitions
         self.dfa_monitor = DFAMonitor( self.auto_task )
 
+        # registration name 
+        self.registered_name = "MiniGrid-TemporalTestEnv-v0"
+
         # set dfa to initial state
         self.dfa_monitor.reset()
         "reward gained for achieving one sub task "
@@ -309,11 +312,10 @@ class WFA_TestEnv(RoomGrid):
     """
 
     def __init__(self, 
-                 WFA, 
-                 prob_penalty = 0.05,
-                 prob_reward  = 0.75,
+                 WFA_monitor, 
+                 f_penalty = 0.05,
+                 f_reward  = 0.75,
                  finish_factor = 3,
-                 auto_reward = None, 
                  max_steps: int | None = None, 
                  **kwargs):
         room_size = 6
@@ -322,19 +324,20 @@ class WFA_TestEnv(RoomGrid):
             ordered_placeholders=[COLOR_NAMES],
         )
         self.path_log = []
-        self.WFA = WFA # WFA representation of LTL task
 
         # initialize monitor for wfa transitions
-        self.WFA_monitor = WFA_monitor(WFA=WFA)
+        self.WFA_monitor = WFA_monitor
 
         # set dfa to initial state
         # self.dfa_monitor.reset()
         "reward gained for achieving one sub task "
         "(making forward transition in auto_task)"
-        self.auto_reward = auto_reward
-        self.WFA_num_states = self.WFA.n
-        self.prob_penalty = prob_penalty
-        self.prob_reward  = prob_reward
+
+        self.registered_name = "MiniGrid-TemporalWFATestEnv-v0"
+
+        self.WFA_num_states = self.WFA_monitor.num_states
+        self.f_penalty = f_penalty
+        self.f_reward  = f_reward
         self.finish_factor = finish_factor
         self.goal_ind      = False
         if max_steps is None:
@@ -367,7 +370,7 @@ class WFA_TestEnv(RoomGrid):
         # })
         self.observation_space["auto_state"] = spaces.Box(
                 low=-1.0,
-                high=1.0,
+                high=2.0,
                 shape=(self.WFA_num_states, ),
                 dtype=np.float32
             )
@@ -448,21 +451,10 @@ class WFA_TestEnv(RoomGrid):
                 log_entry["event"] = f"pickup {self.carrying.type}"
                 self.WFA_monitor.step(f"pickup {self.carrying.type}")
                 self.progress = True
-                "1.a case when red box is picked up. "
-                "this is the final task"
-                if self.carrying is self.obj:
-                    # carrying bod
-                    "add efficiency reward inheritted from minigridenv"
-                    reward += self.finish_factor*self._reward() 
-
-                    "termination variable updated to true"
-                    terminated = True
-
-                    "completed goal indicator"
-                    self.goal_ind   = True
             else:
                 # carrying nothing
                 self.WFA_monitor.step("useless")
+        
         # 2. Case when object is toggled
         elif action == self.actions.toggle:
             # check if we toggled a door
@@ -495,6 +487,16 @@ class WFA_TestEnv(RoomGrid):
                 log_entry["event"] = f"dropped {was_carrying.type}"
                 self.WFA_monitor.step(f"dropped {was_carrying.type}")
                 self.progress = True
+                "3.a case when red box is picked up. "
+                "this is the final task"
+                # if was_carrying is self.obj:
+                    # dropped box
+                if self.WFA_monitor.complete_ind == True:
+                    "termination variable updated to true"
+                    terminated = True
+
+                    "completed goal indicator"
+                    self.goal_ind = True
             else:
                 # dropping without carrying is a useless action
                 self.WFA_monitor.step("useless")
@@ -515,20 +517,23 @@ class WFA_TestEnv(RoomGrid):
         PUNISH PROGRESS AND LOW LIKELIHOOD
         TERMINATE IF LIKELIHOOD IS TOO LOW
         """   
-        if self.WFA_monitor.prob_decrease:
-            reward -= self.prob_penalty 
+        # consolidate rewards and penalties  
+        if self.WFA_monitor.f_decrease:
+            # penalize if WFA func decreases
+            reward -= self.f_penalty 
             # print("bad decision")
             if self.WFA_monitor.unstable_ind:
-                # probability is too close to zero
+                # penalize if WFA func is too close to zero
                 terminated = True
-                # print("UNSTABLE PATH")
+                print("UNSTABLE PATH")
         else:
             # good decision
-            if self.progress:
-                # progress was made and it was a good decision
-                # if probability does not decrease significantly 
-                # then it was a good decision
-                reward += self.prob_reward
+            if self.WFA_monitor.f_increase:
+                # progress was made if score increased
+                reward += self.f_reward
+                if self.WFA_monitor.complete_ind:
+                    "add efficiency reward inheritted from minigridenv"
+                    reward += self.finish_factor*self._reward() 
                 # print("good decision")
 
         "store reward into path_log dictionary for specific timestep"
@@ -605,8 +610,8 @@ class SPWFA_TestEnv(RoomGrid):
 
     def __init__(self, 
                  WFA, 
-                 prob_penalty = 0.01,
-                 prob_reward  = 0.75,
+                 f_penalty = 0.01,
+                 f_reward  = 0.75,
                  finish_factor = 2,
                  auto_reward = None, 
                  max_steps: int | None = None, 
@@ -622,14 +627,17 @@ class SPWFA_TestEnv(RoomGrid):
         # initialize monitor for wfa transitions
         self.WFA_monitor = WFA_monitor(WFA=WFA)
 
+        # registered name with gym
+        self.registered_name = "MiniGrid-TemporalSPWFATestEnv-v0"
+
         # set dfa to initial state
         # self.dfa_monitor.reset()
         "reward gained for achieving one sub task "
         "(making forward transition in auto_task)"
         self.auto_reward = auto_reward
         self.WFA_num_states = self.WFA.n
-        self.prob_penalty = prob_penalty
-        self.prob_reward  = prob_reward
+        self.f_penalty = f_penalty
+        self.f_reward  = f_reward
         self.finish_factor = finish_factor
         self.goal_ind      = False
         if max_steps is None:
@@ -820,7 +828,7 @@ class SPWFA_TestEnv(RoomGrid):
         TERMINATE IF LIKELIHOOD IS TOO LOW
         """
         if self.WFA_monitor.recent_event == "useless":
-            reward -= self.prob_penalty
+            reward -= self.f_penalty
         
         elif self.WFA_monitor.prob_increase:
             # good decision
@@ -828,7 +836,7 @@ class SPWFA_TestEnv(RoomGrid):
                 # progress was made and it was a good decision
                 # if probability increases significantly 
                 # then it was a good decision
-                reward += self.prob_reward
+                reward += self.f_reward
                 print("good decision")
 
         # if self.WFA_monitor.unstable_ind:
@@ -841,7 +849,7 @@ class SPWFA_TestEnv(RoomGrid):
         #         # progress was made and it was a good decision
         #         # if probability increases significantly 
         #         # then it was a good decision
-        #         reward += self.prob_reward
+        #         reward += self.f_reward
         #         # print("good decision")
         # else:
         #     pass 
@@ -1193,7 +1201,7 @@ class ordered_obj(MiniGridEnv):
         if terminated:
             self.wfa_monitor.reset()
             if self.goal_ind:
-                self.save_path_log()
+                # self.save_path_log()
                 print("reached goal!")
                 # pass 
             else:

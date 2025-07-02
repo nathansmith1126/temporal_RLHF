@@ -12,6 +12,7 @@ sys.path.insert(0, project_root)
 import gymnasium as gym
 import numpy as np
 import torch
+import torch_ac
 from minigrid.wrappers import ImgObsWrapper
 from Minigrid.minigrid.envs import test_envs
 from gymnasium.envs.registration import register
@@ -19,22 +20,22 @@ from gymnasium.envs.registration import register
 # from utils_RLHF import get_obss_preprocessor, device
 from utils_RLHF.other import device
 from utils_RLHF.format import get_obss_preprocessor
-from utils_RLHF.misc import register_special_envs, create_ord_obj_env, load_bts_est, BT_SPEC_Estimator, word2WFA_max
-import torch_ac
+from utils_RLHF.misc import register_special_envs, create_multiroom_env, create_ord_obj_env
 from torch_ac.algos.ppo import PPOAlgo
 from torch_ac.utils.penv import ParallelEnv
 from model import ACModel  # custom model
-from AUTOMATA.auto_funcs import dfa_T1, create_wfa_T1, WFA_monitor
+from AUTOMATA.auto_funcs import dfa_T1
 from datetime import datetime
 from typing import Optional 
 
 # ----------------------------
 # 🏁 Main Training Routine
 # ----------------------------
-def main(ENV, NUM_ENVS, TOTAL_FRAMES,
+def PPO_train(ENV, NUM_ENVS, TOTAL_FRAMES,
                           FRAMES_PER_PROC, 
                           gae_lambda = 0.95, entropy_coef = 0.05, 
                           save_indicator: Optional[bool] = True, 
+                          patience: Optional[int] = 30, 
                           max_steps: Optional[int] = None, 
                           ):
     """
@@ -114,8 +115,6 @@ def main(ENV, NUM_ENVS, TOTAL_FRAMES,
     num_frames = 0
     update = 0
 
-    # stopping criterion
-    patience = 30 # stops training when no improvement occurs after 10 episodes
     best_return = -np.inf # initialize best return
 
     while num_frames < TOTAL_FRAMES:
@@ -158,7 +157,7 @@ def main(ENV, NUM_ENVS, TOTAL_FRAMES,
     if save_indicator:
     # Create directory to save models
         save_dir = os.path.join(r"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\torch_models", 
-                                ENV_NAME)
+                                ENV.registered_name)
         os.makedirs(save_dir, exist_ok=True)
 
         # Generate a timestamped filename
@@ -170,7 +169,7 @@ def main(ENV, NUM_ENVS, TOTAL_FRAMES,
         print(f"✅ Model saved to {model_file}")
 
     print("✅ Training complete!")
-    return algo, ENV_NAME
+    return algo, ENV.registered_name
 
 
 
@@ -179,16 +178,17 @@ def main(ENV, NUM_ENVS, TOTAL_FRAMES,
 # ----------------------------
 if __name__ == "__main__":
     save_indicator = True 
-    env_indicator = "ord_obj"
-    # env_indicator = "original_wfa"
+    # env_indicator = "ord_obj"
+    env_indicator = "multi_room"
     if env_indicator == "ord_obj":
-        ord_obj_env = create_ord_obj_env()
+        ord_obj_env = create_ord_obj_env(f_penalty=1.0)
         ENV = ord_obj_env
-    elif env_indicator == "original_wfa":
-        ENV_NAME = "MiniGrid-TemporalSPWFATestEnv-v0"
+    elif env_indicator == "multi_room":
+        multi_room_env = create_multiroom_env()
+        ENV = multi_room_env
     else:
         # dfa
-        ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
+        raise ValueError("Current invalid environment")
     
     # ENV_NAME = "MiniGrid-TemporalTestEnv-v0"
     # ENV_NAME = "MiniGrid-UnlockPickup-v0"
@@ -202,13 +202,14 @@ if __name__ == "__main__":
     save = True
     entropy_coef = 0.15                                                                  
     gae_lambda   = 0.90
-    algo, ENV_NAME = main(ENV=ENV, 
-                          NUM_ENVS=NUM_ENVS, 
-                          TOTAL_FRAMES=TOTAL_FRAMES, 
-                          FRAMES_PER_PROC=FRAMES_PER_PROC,  
-                          entropy_coef=entropy_coef, 
-                          gae_lambda=gae_lambda,
-                          max_steps=max_steps, 
-                          save_indicator = save_indicator)
+    patience = 40
+    algo, _ = PPO_train(ENV=ENV,NUM_ENVS=NUM_ENVS, 
+                            TOTAL_FRAMES=TOTAL_FRAMES, 
+                            FRAMES_PER_PROC=FRAMES_PER_PROC,  
+                            entropy_coef=entropy_coef, 
+                            gae_lambda=gae_lambda,
+                            max_steps=max_steps, 
+                            save_indicator = save_indicator, 
+                            patience = patience)
 
 

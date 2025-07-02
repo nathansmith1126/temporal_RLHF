@@ -98,8 +98,8 @@ class WFA_monitor:
         self.WFA = WFA
 
         "convert WFA arrays to numpy arrays from sympy arrays"
-        self.initial = np.array( WFA.initial ).astype(np.float64)
-        self.final   = np.array( WFA.final ).astype(np.float64)
+        self.initial    = np.array( WFA.initial ).astype(np.float64)
+        self.final      = np.array( WFA.final ).astype(np.float64)
         self.num_states = WFA.n
         self.current_state = self.initial
         # accessed by environment
@@ -195,7 +195,6 @@ class WFA_monitor:
         self.current_state = self.initial
         self.history = []
         self.complete_ind = False 
-
 
 dfa_T1 = DFA(
     states={'q0', 'q1', 'q2', 'q3', 'q4', 'q5'},
@@ -392,7 +391,6 @@ def spwfa2WFA(wfa, alphabet=None) -> WeightedAutomaton:
                             transitions=transitions)
 
     return WFA
-
 
 if __name__ == "__main__":
     # monitor_T1 = DFAMonitor(dfa_T1)

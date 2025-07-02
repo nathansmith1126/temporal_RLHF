@@ -24,7 +24,7 @@ from AUTOMATA.auto_funcs import dfa_T1, create_wfa_T1
 # ----------------------------
 ENV = create_ord_obj_env()
 ENV_NAME = ENV.registered_name
-MODEL_TIMESTAMP = "2025-07-01_09-44-54"  # 📝 Change to your saved timestamp
+MODEL_TIMESTAMP = "2025-07-02_11-30-49"  # 📝 Change to your saved timestamp
 MODEL_DIR       = rf"C:\Users\nsmith3\Documents\GitHub\temporal_RLHF\torch_models\{ENV_NAME}"
 MODEL_PATH      = os.path.join(MODEL_DIR, f"model_{MODEL_TIMESTAMP}.pt")
 

@@ -12,7 +12,7 @@ from gymnasium.envs.registration import register
 from splearn.datasets.data_sample import SplearnArray
 from splearn.datasets.base import DataSample
 from splearn.spectral import Spectral
-from Minigrid.minigrid.envs.test_envs import ordered_obj 
+from Minigrid.minigrid.envs.test_envs import ordered_obj, WFA_TestEnv 
 from AUTOMATA.auto_funcs import spwfa2WFA, create_wfa_T1a, WFA_monitor, dfa_T1
 from WA_package.weighted_automaton import WeightedAutomaton
 from typing import Optional 
@@ -423,11 +423,12 @@ def scores2samples(scores):
 
     return indexed_scores
 
-def word2WFA_max(word: list[str], alphabet: list[str], 
+def word2WFA_max(word: list[str], 
+                 alphabet: list[str], 
                  f: Optional[float] = 1.2, 
                  s: Optional[float] = 0.8, 
                  u: Optional[float] = 0.75,
-                 benign_events: Optional[ list[str] ] = None) -> WeightedAutomaton:
+                 benign_events: Optional[ list[str] ] = []) -> WeightedAutomaton:
     """
     Maps a word (sigma_max) to a WFA, A where f_A(word) > f_(all other words)
 
@@ -591,6 +592,7 @@ def register_special_envs( ENV, max_steps: Optional[int] = None ):
             BTS_EST = load_bts_est(pickle_path=full_path)
             
             WFA = BTS_EST.learned_WFA
+
             # register environment
             register(
                 id=ENV_NAME,               # Unique environment ID
@@ -628,6 +630,19 @@ def register_special_envs( ENV, max_steps: Optional[int] = None ):
                     "render_mode": "rgb_array"
                 },
             )
+        elif ENV_NAME == "MiniGrid-TemporalWFATestEnv-v0" :
+            register(
+                id=ENV_NAME,               # Unique environment ID
+                entry_point="Minigrid.minigrid.envs.test_envs:WFA_TestEnv",  # Module path to the class
+                kwargs={
+                    "WFA_monitor": ENV.WFA_monitor,
+                    "f_reward": ENV.f_reward,
+                    "f_penalty": ENV.f_penalty,
+                    "finish_factor": ENV.finish_factor,
+                    "max_steps": ENV.max_steps,
+                    "render_mode": "rgb_array"
+                },
+            )
         else:
             raise ValueError(f"Unknown environment name passed: {ENV_NAME}")
 
@@ -644,8 +659,24 @@ def create_ord_obj_env(word:Optional[ list[str] ] = ["pickup ball", "dropped bal
                                 u: Optional[float] = 0.75,
                               ) -> ordered_obj:
     """
-    Create ordered object environment
-    """ 
+    Creates ordered_object environment
+
+    Args:
+        word (list of str): list of strings corresponding to the desired word e.g. word = ["a", "b", "c"] with word[0] = "a" is the first event in the word
+        alphabet (list of str): list of strings corresponding to every letter or event in big Sigma (alphabet) MUST BE NO REPEATS
+        f (float): parameter to promote forward progress through word
+        s (float): parameter to decrease f_A if forward progress is not made
+        u (float): parameter for useless events
+        benign_events (list of str): events that are irrelevant if recorded and make no change to f_A output. All the trans matrices are identity
+        actions_list (list of str): list of actions used in word
+        objects_list (list of str): ordered list of objects in environment agent interacts with objects_list[0] first and then objects_list[1] and so forth
+        f_reward (float): reward for progressing through WFA
+        f_penalty (float): penalty (negative reward) for taking actions that have no progress
+        finish_factor (float): reward for completing task = finish_factor*(1 - step_count/max_steps)
+        env_size (int): environment will have grid dimensions of env_size by env_size
+    Returns:
+        ord_obj_env (ordered_obj): instance of ordered_obj environment
+    """
 
     alphabet = ["pickup ball", "pickup box", 
                 "pickup key", "dropped ball", 
@@ -664,6 +695,47 @@ def create_ord_obj_env(word:Optional[ list[str] ] = ["pickup ball", "dropped bal
                               f_penalty=f_penalty, 
                               finish_factor=finish_factor)
     return ord_obj_env
+
+def create_multiroom_env( f_reward: Optional[float] = 10.0,
+                           f_penalty: Optional[float] = 0.25,
+                            finish_factor: Optional[float] = 10.0,
+                              f: Optional[float] = 1.2, 
+                               s: Optional[float] = 0.8, 
+                                u: Optional[float] = 0.75,
+                                render_mode: Optional[ str ] = "rgb_array"
+                              ) -> WFA_TestEnv:
+    """
+    Creates multiroom with door key and box environment
+
+    Args:
+        f (float): parameter to promote forward progress through word
+        s (float): parameter to decrease f_A if forward progress is not made
+        u (float): parameter for useless events
+        f_reward (float): reward for progressing through WFA
+        f_penalty (float): penalty (negative reward) for taking actions that have no progress
+        finish_factor (float): reward for completing task = finish_factor*(1 - step_count/max_steps)
+    Returns:
+        multi_room_env (WFA_TestEnv) multi-room with box key and door
+    """
+    
+    alphabet = ['pickup key', 'opened door', 
+                'dropped key', 'closed door', 
+                'pickup box','dropped box', 'useless']
+    
+    word = ['pickup key', 'opened door', 
+                'dropped key', 'closed door', 
+                'pickup box','dropped box']
+    
+    WFA = word2WFA_max(word=word,alphabet=alphabet, f=f, s=s, u=u)
+    wfa_monitor = WFA_monitor(WFA=WFA)
+    multi_room_env = WFA_TestEnv(WFA_monitor=wfa_monitor,
+                                 f_reward=f_reward, 
+                                 f_penalty=f_penalty,
+                                 finish_factor=finish_factor, 
+                                 render_mode=render_mode)
+    return multi_room_env
+
+
 if __name__ == "__main__":
 
     # ['pickup key', 'opened door', 
