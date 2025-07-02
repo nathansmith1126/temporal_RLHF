@@ -9,8 +9,8 @@ from AUTOMATA.auto_funcs import *
 from utils_RLHF.misc import create_multiroom_env, create_ord_obj_env
 # from utils_RLHF.misc import load_bts_est, BT_SPEC_Estimator, word2WFA_max
 
-# env_indicator = "ord_obj"
-env_indicator = "multi_room"
+env_indicator = "ord_obj"
+# env_indicator = "multi_room"
 if env_indicator == "ord_obj":
     ord_obj_env = create_ord_obj_env(f_penalty=1.0, render_mode="human")
     ENV = ord_obj_env
@@ -18,7 +18,6 @@ elif env_indicator == "multi_room":
     multi_room_env = create_multiroom_env(f_reward = 10.0, f_penalty = 1.0, render_mode="human")
     ENV = multi_room_env
 else:
-    # dfa
     raise ValueError("Current invalid environment")
 
 # used for debuging

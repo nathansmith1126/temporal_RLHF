@@ -657,6 +657,7 @@ def create_ord_obj_env(word:Optional[ list[str] ] = ["pickup ball", "dropped bal
                               f: Optional[float] = 1.2, 
                                s: Optional[float] = 0.8, 
                                 u: Optional[float] = 0.75,
+                                render_mode: Optional[ str ] = "rgb_array"
                               ) -> ordered_obj:
     """
     Creates ordered_object environment
@@ -674,6 +675,7 @@ def create_ord_obj_env(word:Optional[ list[str] ] = ["pickup ball", "dropped bal
         f_penalty (float): penalty (negative reward) for taking actions that have no progress
         finish_factor (float): reward for completing task = finish_factor*(1 - step_count/max_steps)
         env_size (int): environment will have grid dimensions of env_size by env_size
+        render_mode (str): environment render mode 
     Returns:
         ord_obj_env (ordered_obj): instance of ordered_obj environment
     """
@@ -693,7 +695,8 @@ def create_ord_obj_env(word:Optional[ list[str] ] = ["pickup ball", "dropped bal
                               size=env_size, 
                               f_reward=f_reward, 
                               f_penalty=f_penalty, 
-                              finish_factor=finish_factor)
+                              finish_factor=finish_factor, 
+                              render_mode=render_mode)
     return ord_obj_env
 
 def create_multiroom_env( f_reward: Optional[float] = 10.0,
@@ -714,6 +717,7 @@ def create_multiroom_env( f_reward: Optional[float] = 10.0,
         f_reward (float): reward for progressing through WFA
         f_penalty (float): penalty (negative reward) for taking actions that have no progress
         finish_factor (float): reward for completing task = finish_factor*(1 - step_count/max_steps)
+        render_mode (str): environment render mode 
     Returns:
         multi_room_env (WFA_TestEnv) multi-room with box key and door
     """
@@ -734,7 +738,6 @@ def create_multiroom_env( f_reward: Optional[float] = 10.0,
                                  finish_factor=finish_factor, 
                                  render_mode=render_mode)
     return multi_room_env
-
 
 if __name__ == "__main__":
 
