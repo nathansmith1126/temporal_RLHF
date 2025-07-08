@@ -46,6 +46,7 @@ def PPO_train(ENV, NUM_ENVS, TOTAL_FRAMES,
     gae_lambda [float] - learning parameter, decrease to promote exploration
     entropy_coef [float] - learning parameter, increase to promote exploration
     save_indicator [bool] - boolean indicator to save model
+    patience [int]  - after patience updates with no improvement the training algorithm 
     max_steps [int] - maximum number of actions an agent takes before environment resets
     """
     # if env_params:
@@ -93,7 +94,7 @@ def PPO_train(ENV, NUM_ENVS, TOTAL_FRAMES,
 
     # print(model)
     # Create PPO algorithm
-    algo = torch_ac.PPOAlgo(
+    algo = PPOAlgo(
         envs=env_list,
         acmodel=model,
         device=device,
