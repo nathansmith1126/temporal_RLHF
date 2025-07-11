@@ -170,7 +170,7 @@ def PPO_train(ENV, NUM_ENVS, TOTAL_FRAMES,
         print(f"✅ Model saved to {model_file}")
 
     print("✅ Training complete!")
-    return algo, ENV.registered_name
+    return algo, logs, ENV.registered_name
 
 
 
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     entropy_coef = 0.15                                                                  
     gae_lambda   = 0.90
     patience = 40
-    algo, _ = PPO_train(ENV=ENV,NUM_ENVS=NUM_ENVS, 
+    algo, _, _ = PPO_train(ENV=ENV,NUM_ENVS=NUM_ENVS,
                             TOTAL_FRAMES=TOTAL_FRAMES, 
                             FRAMES_PER_PROC=FRAMES_PER_PROC,  
                             entropy_coef=entropy_coef, 
@@ -212,5 +212,3 @@ if __name__ == "__main__":
                             max_steps=max_steps, 
                             save_indicator = save_indicator, 
                             patience = patience)
-
-
